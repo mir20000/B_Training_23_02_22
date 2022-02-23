@@ -12,27 +12,9 @@ const CustomerSchema = new mongoose.Schema(
       .lowercase()
       .external(checkEmail)
       .email(),
-    // {
-    //   type: String,
-    //   trim: true,
-    //   lowercase: true,
-    //   unique: true,
-    //   required: "Email address is required",
-    //   // validate: [validateEmail, 'Please fill a valid email address'],
-    //   match: [
-    //     /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/,
-    //     "Please fill a valid email address",
-    //   ],
-    // },
+
     contactNo: Joi.number().max(10).min(10).required().external(checkPhone),
-    // {
-    //   type: Number,
-    //   minlength: 10,
-    //   maxlength: 10,
-    //   required: [true, "Must provide Contact NO."],
-    //   unique: true,
-    //   trim: true,
-    // },
+
     password: Joi.string(),
     // {
     //   type: String,

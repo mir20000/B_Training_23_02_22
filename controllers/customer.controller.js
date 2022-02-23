@@ -3,6 +3,7 @@ const asyncWrapper = require("../middlewares/asyncWrapper");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const autoIdGenerator = require("../middlewares/autoIdGenerator");
+const accountModel = require("../models/account.model");
 
 const allCust = asyncWrapper(async (req, res) => {
   const customers = await Customer.find({});
@@ -24,7 +25,7 @@ const signUp = asyncWrapper(async (req, res) => {
   // console.log("hi");
   const cifNo = await autoIdGenerator();
   const encPass = await bcrypt.hash(password, 12);
-
+  Customer
   const customers = await Customer.create({
     name: name,
     email: email,
@@ -33,6 +34,7 @@ const signUp = asyncWrapper(async (req, res) => {
     CIF_No: cifNo,
   });
 
+  const account = await accountModel.create({});
   if (!customers) {
     return res
       .status(404)
