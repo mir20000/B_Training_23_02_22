@@ -4,6 +4,9 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const autoIdGenerator = require("../middlewares/autoIdGenerator");
 const accountModel = require("../models/account.model");
+const errorHandler = require("../middlewares/errorHandler");
+const CustomApiError = require("../error/customApiError");
+const { StatusCodes } = require("http-status-codes");
 
 const allCust = asyncWrapper(async (req, res) => {
   const customers = await Customer.find({});
@@ -25,7 +28,7 @@ const signUp = asyncWrapper(async (req, res) => {
   // console.log("hi");
   const cifNo = await autoIdGenerator();
   const encPass = await bcrypt.hash(password, 12);
-  Customer
+  Customer;
   const customers = await Customer.create({
     name: name,
     email: email,
@@ -82,20 +85,20 @@ const signIn = asyncWrapper(async (req, res) => {
     expiresIn: 3600,
   });
 });
-const getCust = asyncWrapper(async (req, res) => {
-  const { id } = req.params;
-  const customers = await Customer.findById(id);
-  if (!customers) {
-    return res
-      .status(404)
-      .json({ success: false, message: "Customer not found" });
-  }
-  res.status(200).json({
-    success: true,
-    message: `Customer find with id ${customers._id}`,
-    customers: customers,
-  });
-});
+// const getCust = asyncWrapper(async (req, res) => {
+//   const { id } = req.params;
+//   const customers = await Customer.findById(id);
+//   if (!customers) {
+//     return res
+//       .status(404)
+//       .json({ success: false, message: "Customer not found" });
+//   }
+//   res.status(200).json({
+//     success: true,
+//     message: `Customer find with id ${customers._id}`,
+//     customers: customers,
+//   });
+// });
 const setCust = asyncWrapper(async (req, res) => {
   const { id: custId } = req.params;
   const customers = await Customer.findOneAndUpdate({ _id: custId }, req.body, {
@@ -160,6 +163,22 @@ const blockCust = asyncWrapper(async (req, res) => {
   res.status(200).json({
     success: true,
     message: "Customer Blocked",
+    customers: customers,
+  });
+});
+
+////////////////////////////////////////////////////////////////
+//THIS PART
+////////////////////////////////////////////////////////////////
+const getCust = asyncWrapper(async (req, res, next) => {
+  const { id } = req.params;
+  const customers = await Customer.findById(id);
+  if (!customers) {
+    return next(new CustomApiError(StatusCodes.NOT_FOUND));
+  }
+  res.status(200).json({
+    success: true,
+    message: `Customer find with id ${customers._id}`,
     customers: customers,
   });
 });
